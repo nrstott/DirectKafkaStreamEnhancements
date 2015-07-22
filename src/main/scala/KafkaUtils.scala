@@ -14,8 +14,9 @@ object KafkaUtils {
     KD <: Decoder[K]: ClassTag,
     VD <: Decoder[V]: ClassTag] (
     ssc: StreamingContext,
-      kafkaParams: Map[String, String],
-      topics: Set[String]
+    kafkaParams: Map[String, String],
+    config: Map[String, String],
+    topics: Set[String]
   ): InputDStream[(K, V)] = {
     val messageHandler = (mmd: MessageAndMetadata[K, V]) => (mmd.key, mmd.message)
     val kc = new KafkaCluster(kafkaParams)
@@ -32,8 +33,8 @@ object KafkaUtils {
       val fromOffsets = leaderOffsets.map { case (tp, lo) =>
         (tp, lo.offset)
       }
-      new DirectKafkaInputDStream[K, V, KD, VD, (K, V)](
-        ssc, kafkaParams, fromOffsets, messageHandler)
+      new ConfigurableDirectKafkaInputDStream[K, V, KD, VD, (K, V)](
+        ssc, kafkaParams, fromOffsets, config, messageHandler)
     }
     result.fold(
       errs => throw new SparkException(errs.mkString("\n")),
