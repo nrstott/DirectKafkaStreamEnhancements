@@ -7,7 +7,7 @@ import org.apache.spark.streaming.StreamingContext
 import org.apache.spark.streaming.dstream.InputDStream
 import scala.reflect.ClassTag
 
-object KafkaUtils {
+object MoreKafkaUtils {
   def createDirectStream[
     K: ClassTag,
     V: ClassTag,
